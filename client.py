@@ -13,7 +13,7 @@ def send_data(server_ip, server_port, data):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((server_ip, server_port))
     message = struct.pack(f"<{len(data.encode())}s", data.encode())
-    client.send(message)
+    client.sendall(message)
     client.close()
 
 
