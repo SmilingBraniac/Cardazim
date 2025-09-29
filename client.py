@@ -9,7 +9,7 @@ import socket
 import struct
 
 
-def send_data(server_ip, server_port, data):
+def send_data(server_ip : str, server_port : int, data : str) -> None:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((server_ip, server_port))
     message = struct.pack(f"<{len(data.encode())}s", data.encode())
@@ -46,4 +46,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-#python3 client.py 127.0.0.1 8000 hello
+    

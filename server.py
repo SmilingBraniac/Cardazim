@@ -11,14 +11,13 @@ import time
 
 def run_server(ip, port):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # server.setsockopt(socket.SOCKET_SOL, socket.SO_REUSEADDR, 1)
     server.bind((ip, port))
     server.listen(5)
     while True:
         connection, address = server.accept()
         client_message = ""
         while True:
-            data = connection.recv(4096)  # why 4096?
+            data = connection.recv(4096)
             if not data:
                 break
             message = struct.unpack(f"<{len(data)}s", data)
@@ -57,5 +56,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-#python3 server.py 127.0.0.1 8000
