@@ -46,4 +46,5 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-#python3 client.py 127.0.0.1 8000 hello
+    
+#python3 Cardazim/client.py 127.0.0.1 8000 hello

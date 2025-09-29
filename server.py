@@ -7,15 +7,17 @@ import sys
 ###########################################################
 import socket
 import struct
+import threading
 import time
 
-def run_server(ip, port):
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # server.setsockopt(socket.SOCKET_SOL, socket.SO_REUSEADDR, 1)
-    server.bind((ip, port))
-    server.listen(5)
+
+def run_connection(connection : socket) -> None:
+    """
+    connection - a socket connected to the client
+    handles a connection woth the client
+    returns nothing
+    """
     while True:
-        connection, address = server.accept()
         client_message = ""
         while True:
             data = connection.recv(4096)  # why 4096?
@@ -23,10 +25,33 @@ def run_server(ip, port):
                 break
             message = struct.unpack(f"<{len(data)}s", data)
             client_message += message[0].decode()
-        if client_message == 'close':
+        if client_message == "close":
             break
-        print(f"Received data: {client_message}")
+        if client_message:
+            print(f"Recieved data: {client_message}")
+    print("bye :(")
     connection.close()
+
+def run_server(ip : str, port : int) -> None:
+    """
+    ip - a string of the server's ip adress
+    port - an int of the server's port
+    creates and handles the server
+    returns nothing 
+    """
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # server.setsockopt(socket.SOCKET_SOL, socket.SO_REUSEADDR, 1)
+    server.bind((ip, port))
+    server.listen(5) # why 5?
+    threads = [] #list of current threads
+    user_addresses = [] # list of current user addresses
+    while True:
+        connection, address = server.accept()
+        if address not in user_addresses:
+            user_addresses.append(address)
+            new_thread = threading.Thread(target=run_connection, args=(connection,))
+            new_thread.start()
+            threads.append(new_thread)
     server.close()
 
 
@@ -58,4 +83,4 @@ def main():
 if __name__ == "__main__":
     sys.exit(main())
 
-#python3 server.py 127.0.0.1 8000
+#python3 Cardazim/server.py 127.0.0.1 8000
